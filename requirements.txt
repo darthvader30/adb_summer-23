@@ -55,7 +55,6 @@ nbconvert
 nbformat
 nest-asyncio
 numpy
-opencv-python.60
 packaging
 pandas
 pandocfilters
