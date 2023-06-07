@@ -38,10 +38,10 @@ def addpic():
 
 @app.route('/all', methods=['POST','GET'])
 def full_list():
-    connection = sqlite3.connect('people.db')
+    connection = sqlite3.connect('peopleinfo.db')
     cursor = connection.cursor()
-    querry="Select * from people "
-    cursor.execute(querry)
+    query="Select * from people "
+    cursor.execute(query)
     rows = cursor.fetchall()
     connection.close()
     return render_template("list.html",rows = rows)
@@ -49,15 +49,15 @@ def full_list():
 @app.route('/update_sal',methods=['POST','GET'])
 def update_sal():
     if (request.method=='POST'):
-        connection = sqlite3.connect('people.db')
+        connection = sqlite3.connect('peopleinfo.db')
         cursor = connection.cursor()
         name= str(request.form['name'])
         keyword= str(request.form['sal'])
-        querry="UPDATE people SET salary = '"+keyword+"'   WHERE Name ='"+name+"' "
-        cursor.execute(querry)
+        query="UPDATE people SET salary = '"+keyword+"'   WHERE Name ='"+name+"' "
+        cursor.execute(query)
         connection.commit()
-        querry2="Select * from people "
-        cursor.execute(querry2)
+        query2="Select * from people "
+        cursor.execute(query2)
         rows = cursor.fetchall()
         connection.close()
     return render_template("list.html",rows = rows)
@@ -65,15 +65,15 @@ def update_sal():
 @app.route('/update_key',methods=['POST','GET'])
 def updatek():
     if (request.method=='POST'):
-        connection = sqlite3.connect('people.db')
+        connection = sqlite3.connect('peopleinfo.db')
         cursor = connection.cursor()
         name= str(request.form['name'])
         keyword= str(request.form['keyword'])
-        querry="UPDATE people SET keywords = '"+keyword+"'   WHERE Name ='"+name+"' "
-        cursor.execute(querry)
+        query="UPDATE people SET keywords = '"+keyword+"'   WHERE Name ='"+name+"' "
+        cursor.execute(query)
         connection.commit()
-        querry2="Select * from people "
-        cursor.execute(querry2)
+        query2="Select * from people "
+        cursor.execute(query2)
         rows = cursor.fetchall()
         connection.close()
     return render_template("list.html",rows = rows)
@@ -81,15 +81,15 @@ def updatek():
 @app.route('/addpic',methods=['POST','GET'])
 def addpicture():
     if (request.method=='POST'):
-        connection = sqlite3.connect('people.db')
+        connection = sqlite3.connect('peopleinfo.db')
         currsor = connection.cursor()
         name= str(request.form['name1'])
         pic= str(request.form['pic1'])
-        querry="UPDATE people SET Picture = '"+pic+"'   WHERE Name ='"+name+"' "
-        currsor.execute(querry)
+        query="UPDATE people SET Picture = '"+pic+"'   WHERE Name ='"+name+"' "
+        currsor.execute(query)
         connection.commit()
-        querry2="Select * from people "
-        currsor.execute(querry2)
+        query2="Select * from people "
+        currsor.execute(query2)
         rows = currsor.fetchall()
         connection.close()
     return render_template("list.html",rows = rows)
@@ -99,11 +99,11 @@ def addpicture():
 @app.route('/range_sal', methods=['GET', 'POST'])
 def notmatch():
     if (request.method=='POST'):
-        connection = sqlite3.connect('people.db')
+        connection = sqlite3.connect('peopleinfo.db')
         cursor = connection.cursor()
         salrange= (request.form['range'])
-        querry="select * from people WHERE Salary  <"+salrange+""
-        cursor.execute(querry)
+        query="select * from people WHERE Salary  <"+salrange+""
+        cursor.execute(query)
         rows = cursor.fetchall()
         connection.close()
     return render_template("put_pic.html",rows = rows)
@@ -111,25 +111,25 @@ def notmatch():
 @app.route('/remove_person', methods=['GET', 'POST'])
 def deleterecord():
     if (request.method=='POST'):
-        connection = sqlite3.connect('people.db')
+        connection = sqlite3.connect('peopleinfo.db')
         cursor = connection.cursor()
         name= str(request.form['name'])
-        querry="DELETE FROM people WHERE Name ='"+name+"' "
-        cursor.execute(querry)
+        query="DELETE FROM people WHERE Name ='"+name+"' "
+        cursor.execute(query)
         connection.commit()
-        querry2="Select * from people "
-        cursor.execute(querry2)
+        query2="Select * from people "
+        cursor.execute(query2)
         rows = cursor.fetchall()
         connection.close()
     return render_template("list.html",rows = rows)
 
 @app.route('/find_deets', methods=['POST','GET'])
 def list():
-    connection = sqlite3.connect('people.db')
+    connection = sqlite3.connect('peopleinfo.db')
     cursor = connection.cursor()
     field=str(request.form['name'])
-    querry="Select * from people WHERE Name =  '"+field+"' "
-    cursor.execute(querry)
+    query="Select * from people WHERE Name =  '"+field+"' "
+    cursor.execute(query)
     rows = cursor.fetchall()
     connection.close()
     return render_template("put_pic.html",rows = rows)
