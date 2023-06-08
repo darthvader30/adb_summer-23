@@ -1,6 +1,5 @@
-from multiprocessing import connection
 from flask import Flask, render_template, request
-import sqlite3
+import pyodbc
 
 app = Flask(__name__)
 
@@ -36,83 +35,79 @@ def updatekey():
 def addpic():
    return render_template('add_pic.html')
 
+#ODBC Driver connection to Azure SQL Database
+driver = '{ODBC Driver 18 for SQL Server}'
+database = 'adb'
+server = 'tcp:dbadb.database.windows.net,1433'
+username = "kxs5434"
+password = "kxs@root5434"
+connection= pyodbc.connect('DRIVER='+driver+';SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+cursor = connection.cursor() #cursor 
+
+#Function to list all entries
 @app.route('/all', methods=['POST','GET'])
 def full_list():
-    connection = sqlite3.connect('peopleinfo.db')
-    cursor = connection.cursor()
-    query="Select * from people "
+    query="SELECT * FROM people"
     cursor.execute(query)
-    rows = cursor.fetchall()
-    connection.close()
+    rows=cursor.fetchall()
     return render_template("list.html",rows = rows)
 
-@app.route('/update_sal',methods=['POST','GET'])
-def update_sal():
+#Function to update salary of a particular entry
+@app.route('/update_salary',methods=['POST','GET'])
+def updateSalary():
     if (request.method=='POST'):
-        connection = sqlite3.connect('peopleinfo.db')
-        cursor = connection.cursor()
         name= str(request.form['name'])
         keyword= str(request.form['sal'])
-        query="UPDATE people SET salary = '"+keyword+"'   WHERE Name ='"+name+"' "
+        query="UPDATE people SET salary = '"+keyword+"' WHERE Name ='"+name+"' "
         cursor.execute(query)
         connection.commit()
-        query2="Select * from people "
+        query2="Select * from people"
         cursor.execute(query2)
         rows = cursor.fetchall()
-        connection.close()
-    return render_template("list.html",rows = rows)
+    return render_template("list.html", rows = rows)
 
-@app.route('/update_key',methods=['POST','GET'])
-def updatek():
+#Function to update keyword of an entry
+@app.route('/update_keyword',methods=['POST','GET'])
+def updateKeyword():
     if (request.method=='POST'):
-        connection = sqlite3.connect('peopleinfo.db')
-        cursor = connection.cursor()
         name= str(request.form['name'])
         keyword= str(request.form['keyword'])
-        query="UPDATE people SET keywords = '"+keyword+"'   WHERE Name ='"+name+"' "
+        query="UPDATE people SET keywords = '"+keyword+"'WHERE Name ='"+name+"' "
         cursor.execute(query)
         connection.commit()
-        query2="Select * from people "
+        query2="Select * from people"
         cursor.execute(query2)
         rows = cursor.fetchall()
-        connection.close()
     return render_template("list.html",rows = rows)
 
-@app.route('/addpic',methods=['POST','GET'])
-def addpicture():
+#Function to add picture for an entry
+@app.route('/addPicture',methods=['POST','GET'])
+def addPicture():
     if (request.method=='POST'):
-        connection = sqlite3.connect('peopleinfo.db')
-        currsor = connection.cursor()
         name= str(request.form['name1'])
         pic= str(request.form['pic1'])
         query="UPDATE people SET Picture = '"+pic+"'   WHERE Name ='"+name+"' "
-        currsor.execute(query)
+        cursor.execute(query)
         connection.commit()
         query2="Select * from people "
-        currsor.execute(query2)
-        rows = currsor.fetchall()
-        connection.close()
+        cursor.execute(query2)
+        rows = cursor.fetchall()
     return render_template("list.html",rows = rows)
 
-
-
+#Function to list entries where salary < input salary
 @app.route('/range_sal', methods=['GET', 'POST'])
-def notmatch():
+def salaryRange():
     if (request.method=='POST'):
-        connection = sqlite3.connect('peopleinfo.db')
-        cursor = connection.cursor()
-        salrange= (request.form['range'])
-        query="select * from people WHERE Salary  <"+salrange+""
+        salRange= (request.form['range'])
+        query="SELECT * FROM people WHERE Salary <'"+salRange+"'"
         cursor.execute(query)
         rows = cursor.fetchall()
-        connection.close()
     return render_template("put_pic.html",rows = rows)
 
+#Function to remove an entry
 @app.route('/remove_person', methods=['GET', 'POST'])
 def deleterecord():
     if (request.method=='POST'):
-        connection = sqlite3.connect('peopleinfo.db')
-        cursor = connection.cursor()
         name= str(request.form['name'])
         query="DELETE FROM people WHERE Name ='"+name+"' "
         cursor.execute(query)
@@ -120,18 +115,15 @@ def deleterecord():
         query2="Select * from people "
         cursor.execute(query2)
         rows = cursor.fetchall()
-        connection.close()
     return render_template("list.html",rows = rows)
 
-@app.route('/find_deets', methods=['POST','GET'])
-def list():
-    connection = sqlite3.connect('peopleinfo.db')
-    cursor = connection.cursor()
+#Function to list details of a particular entry
+@app.route('/find_details', methods=['POST','GET'])
+def findDetails():
     field=str(request.form['name'])
     query="Select * from people WHERE Name =  '"+field+"' "
     cursor.execute(query)
     rows = cursor.fetchall()
-    connection.close()
     return render_template("put_pic.html",rows = rows)
 
 if __name__ =="__main__":
