@@ -66,13 +66,13 @@ def updateSalary():
         rows = cursor.fetchall()
     return render_template("list.html", rows = rows)
 
-#Function to update keyword of an entry
+#Function to update descript of an entry
 @app.route('/update_keyword',methods=['POST','GET'])
 def updateKeyword():
     if (request.method=='POST'):
         name= str(request.form['name'])
-        keyword= str(request.form['keyword'])
-        query="UPDATE people SET keywords = '"+keyword+"'WHERE Name ='"+name+"' "
+        descript= str(request.form['descript'])
+        query="UPDATE people SET descript = '"+descript+"'WHERE Name ='"+name+"' "
         cursor.execute(query)
         connection.commit()
         query2="Select * from people"
@@ -94,12 +94,13 @@ def addPicture():
         rows = cursor.fetchall()
     return render_template("list.html",rows = rows)
 
-#Function to list entries where salary < input salary
+#Function to list entries for room range
 @app.route('/range_sal', methods=['GET', 'POST'])
 def salaryRange():
     if (request.method=='POST'):
-        salRange= (request.form['range'])
-        query="SELECT * FROM people WHERE Salary <'"+salRange+"'"
+        stRange= (request.form['stRange'])
+        endRange= (request.form['endRange'])
+        query="Select * from people WHERE room BETWEEN '"+stRange+"' AND '"+endRange+"' "
         cursor.execute(query)
         rows = cursor.fetchall()
     return render_template("put_pic.html",rows = rows)
@@ -112,7 +113,7 @@ def deleterecord():
         query="DELETE FROM people WHERE Name ='"+name+"' "
         cursor.execute(query)
         connection.commit()
-        query2="Select * from people "
+        query2="Select * from people"
         cursor.execute(query2)
         rows = cursor.fetchall()
     return render_template("list.html",rows = rows)
@@ -120,8 +121,8 @@ def deleterecord():
 #Function to list details of a particular entry
 @app.route('/find_details', methods=['POST','GET'])
 def findDetails():
-    field=str(request.form['name'])
-    query="Select * from people WHERE Name =  '"+field+"' "
+    teln=(request.form['teln'])
+    query="Select * from people WHERE teln ='"+teln+"' "
     cursor.execute(query)
     rows = cursor.fetchall()
     return render_template("put_pic.html",rows = rows)
